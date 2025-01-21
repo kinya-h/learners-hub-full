@@ -34,7 +34,7 @@ ALLOWED_HOSTS = ['*']
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:5173' , 'https://art-gallery-e4zt.onrender.com' , 'http://localhost:8000'
+    'http://localhost:5173' , 'https://learners-hub-full.onrender.com' , 'http://localhost:8000'
 ]
 
 # Application definition
