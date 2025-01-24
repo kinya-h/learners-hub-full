@@ -1,8 +1,8 @@
 # example netlify.toml
 [build]
-  command = "python manage.py collectstatic"
+  command = "python manage.py collectstatic --noinput"
   functions = "netlify/functions"
-  publish = ""
+  publish = "staticfiles"
 
   ## Uncomment to use this redirect for Single Page Applications like create-react-app.
   ## Not needed for static site generators.
