@@ -1,19 +1,37 @@
 from rest_framework import serializers
 from .models import Payment
-
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from .models import Payment
-from rest_framework import serializers
+from djoser.serializers import TokenCreateSerializer
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        token['username'] = user.username  # Add username to the token
+        token['email'] = user.email  # Add email to the token
+        return token
+
+class CustomTokenCreateSerializer(TokenCreateSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        refresh = self.get_token(self.user)
+        data['refresh'] = str(refresh)
+        data['access'] = str(refresh.access_token)
+        return data
 
 class PaymentCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
-        fields = ['email', 'amount', 'paystack_reference', 'status']
-        read_only_fields = ['user']
+        fields = [
+            'tracking_id', 'provider', 'status', 'currency', 'amount', 'account',
+            'customer_id', 'phone_number', 'email', 'first_name', 'last_name'
+        ]
+        read_only_fields = ['user', 'created_at']
+
     def create(self, validated_data):
-        print("validated_data")
-        # Get the user from the request
+        # Get the user from the request context
         user = self.context['request'].user
         # Add the user to the validated data
         validated_data['user'] = user
@@ -22,8 +40,9 @@ class PaymentCreateSerializer(serializers.ModelSerializer):
 class PaymentReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
-        fields = ['id','amount', 'email', 'paystack_reference', 
-                 'status', 'created_at']
+        fields = [
+            'id', 'tracking_id', 'user', 'amount' ,'created_at', 'provider', 'status',
+            'currency', 'account', 'customer_id', 'phone_number', 'email',
+            'first_name', 'last_name'
+        ]
         read_only_fields = fields
-
- 

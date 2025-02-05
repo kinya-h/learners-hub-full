@@ -8,10 +8,14 @@ class PaymentAdmin(admin.ModelAdmin):
 
     # Fields to display in the list view
     list_display = (
-        'paystack_reference',
+        'tracking_id',
         'user_link',
-        'amount_display',
+        'provider',
         'status_badge',
+        'currency',
+        'account',
+        'customer_id',
+        'phone_number',
         'email',
         'created_at',
     )
@@ -19,16 +23,24 @@ class PaymentAdmin(admin.ModelAdmin):
     # Fields to filter by in the sidebar
     list_filter = (
         'status',
+        'provider',
+        'currency',
         'created_at',
         'user__is_staff',  # Example filter: whether the user is staff
     )
 
     # Fields to search by
     search_fields = (
+        'tracking_id',
         'user__username',
         'user__email',
-        'paystack_reference',
+        'provider',
+        'account',
+        'customer_id',
+        'phone_number',
         'email',
+        'first_name',
+        'last_name',
     )
 
     # Default ordering
@@ -36,11 +48,17 @@ class PaymentAdmin(admin.ModelAdmin):
 
     # Fields to display as read-only
     readonly_fields = (
-        'paystack_reference',
+        'tracking_id',
         'user',
-        'amount',
-        'email',
+        'provider',
         'status',
+        'currency',
+        'account',
+        'customer_id',
+        'phone_number',
+        'email',
+        'first_name',
+        'last_name',
         'created_at',
     )
 
@@ -48,11 +66,17 @@ class PaymentAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': (
-                'paystack_reference',
+                'tracking_id',
                 'user',
-                'amount',
-                'email',
+                'provider',
                 'status',
+                'currency',
+                'account',
+                'customer_id',
+                'phone_number',
+                'email',
+                'first_name',
+                'last_name',
                 'created_at',
             )
         }),
@@ -75,7 +99,7 @@ class PaymentAdmin(admin.ModelAdmin):
             color,
             obj.get_status_display()
         )
-    status_badge.short_description = 'Status'
+    status_badge.short_description = 'status'
     status_badge.admin_order_field = 'status'
 
     def user_link(self, obj):
@@ -89,14 +113,6 @@ class PaymentAdmin(admin.ModelAdmin):
         return "-"
     user_link.short_description = 'User'
     user_link.admin_order_field = 'user__username'
-
-    def amount_display(self, obj):
-        """
-        Formats the amount with currency.
-        """
-        return f"${obj.amount:,.2f}"
-    amount_display.short_description = 'Amount'
-    amount_display.admin_order_field = 'amount'
 
     # Define custom actions
     actions = ['mark_as_completed', 'mark_as_failed']
@@ -124,13 +140,3 @@ class PaymentAdmin(admin.ModelAdmin):
     # Optional: Disable deleting Payment records via admin
     def has_delete_permission(self, request, obj=None):
         return False
-
-    # # Optional: Customize the admin title and header
-    # change_list_template = "admin/payments_change_list.html"
-
-    # # Optional: Add custom CSS for better styling
-    # class Media:
-    #     css = {
-    #         "all": ("admin/css/custom_payment_admin.css",)
-    #     }
-

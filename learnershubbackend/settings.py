@@ -167,7 +167,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 from datetime import timedelta
 
-
+DJOSER = {
+    'SERIALIZERS': {
+        'token_create': 'core.serializers.CustomTokenCreateSerializer',
+    },
+}
 REST_FRAMEWORK = {
     'COERCE_DECIMAL_TO_STRING':False,
     'DEFAULT_AUTHENTICATION_CLASSES': (
