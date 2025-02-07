@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Payment
+from .models import Payment,WriterProfile,WriterApplication
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from djoser.serializers import TokenCreateSerializer
@@ -46,3 +46,19 @@ class PaymentReadSerializer(serializers.ModelSerializer):
             'first_name', 'last_name'
         ]
         read_only_fields = fields
+
+
+
+
+class WriterApplicationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WriterApplication
+        fields = "__all__"
+
+class WriterProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WriterProfile
+        fields = [
+            'id', 'avatar', 'name', 'role', 'rating', 'specialization',
+            'skills', 'projects', 'experience', 'status', 'location'
+        ]

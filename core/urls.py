@@ -8,6 +8,9 @@ router = routers.DefaultRouter()
 
 # router.register('clients' , views.ClientViewSet , basename='clients')
 router.register("payments" , views.PaymentViewSet , basename="payments")
+router.register('writers', views.WriterProfileViewSet, basename='writers')
+router.register(r"writers/applications", views.WriterApplicationViewSet, basename="writer-application")
+
 # router.register(r'stk-push-callback', views.STKPushCallbackViewSet, basename='stk-push-callback')
 
 # urlpatterns = router.urls + products_router.urls

@@ -5,6 +5,10 @@ from rest_framework.decorators import action
 from .models import Payment
 from .serializers import PaymentCreateSerializer, PaymentReadSerializer
 from django.views.generic import TemplateView
+from rest_framework import viewsets, filters
+from .models import WriterProfile, WriterApplication
+from .serializers import WriterProfileSerializer, WriterApplicationSerializer
+from django_filters.rest_framework import DjangoFilterBackend
 
 class ReactAppView(TemplateView):
     template_name = 'index.html'
@@ -67,3 +71,48 @@ class PaymentViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+
+
+from .serializers import WriterApplicationSerializer
+
+class WriterApplicationViewSet(viewsets.ModelViewSet):
+    queryset = WriterApplication.objects.all()
+    serializer_class = WriterApplicationSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(is_approved=False)
+    @action(detail=True, methods=["post"])
+    def approve(self, request, pk=None):
+        application = self.get_object()
+        if not application.is_approved:
+            # Create a WriterProfile
+            WriterProfile.objects.create(
+                name=f"{application.first_name} {application.last_name}",
+                role=application.category,
+                specialization=application.category,
+                experience=application.experience,
+                status="Active",
+                location="Unknown",
+                email=application.email,
+                phone_number=application.phone,
+                skills=[application.category],
+                projects="0",
+            )
+            application.is_approved = True
+            application.save()
+            return Response({"status": "Application approved"}, status=status.HTTP_200_OK)
+        return Response({"status": "Application already approved"}, status=status.HTTP_400_BAD_REQUEST)
+class WriterProfileViewSet(viewsets.ModelViewSet):
+    queryset = WriterProfile.objects.all()
+    serializer_class = WriterProfileSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = {
+        'role': ['exact'],
+        'specialization': ['exact'],
+        'rating': ['gte', 'lte'],
+        'experience': ['exact'],
+        'location': ['exact'],
+    }
+    search_fields = ['name', 'role', 'specialization', 'skills']
+    ordering_fields = ['rating', 'experience']    

@@ -6,9 +6,8 @@ User = get_user_model()
 class Payment(models.Model):
     PAYMENT_STATUS_CHOICES = [
         ('COMPLETE', 'Completed'),
-        ('FAILED', 'Failed'),
-        ('REVERSED', 'Reversed'),
-        ('PROCESSED', 'Processing'),
+        ('CANCELLED', 'Cancelled'),
+        ('PENDING', 'Pending'),
     ]
 
 
@@ -29,3 +28,34 @@ class Payment(models.Model):
 
     def __str__(self):
         return f"Payment {self.tracking_id} - {self.user} - {self.state}"
+
+class WriterApplication(models.Model):
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+    email = models.EmailField()
+    phone = models.CharField(max_length=20)
+    category = models.CharField(max_length=50)
+    experience = models.CharField(max_length=50)
+    summary = models.TextField()
+    portfolio = models.FileField(upload_to="portfolios/", blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_approved = models.BooleanField(default=False)  # Track approval status
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
+    
+
+class WriterProfile(models.Model):
+    avatar = models.URLField(max_length=500, blank=True, null=True)
+    name = models.CharField(max_length=255)
+    role = models.CharField(max_length=255)
+    rating = models.FloatField(default=0.0)
+    specialization = models.CharField(max_length=255)
+    skills = models.JSONField(default=list)  # Store skills as a list
+    projects = models.CharField(max_length=255)
+    experience = models.CharField(max_length=255)
+    status = models.CharField(max_length=255)
+    location = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name        
