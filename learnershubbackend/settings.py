@@ -111,9 +111,13 @@ DATABASES = {
     )
 }
 
-DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
-DATABASES['default']['OPTIONS']['ssl'] =  {'ca': os.environ.get('MYSQL_ATTR_SSL_CA')}
+# Ensure OPTIONS exists before modifying it
+DATABASES.setdefault('default', {})
+DATABASES['default'].setdefault('OPTIONS', {})
 
+# Set SSL if the environment variable exists
+if os.getenv('MYSQL_ATTR_SSL_CA'):
+    DATABASES['default']['OPTIONS']['ssl'] = {'ca': os.getenv('MYSQL_ATTR_SSL_CA')}
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
