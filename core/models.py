@@ -17,7 +17,6 @@ class Payment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     provider = models.CharField(max_length=50)  
     status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='PROCESSED')
-    paystack_reference = models.CharField(max_length=200, unique=True)
     currency = models.CharField(max_length=10)  
     account = models.CharField(max_length=50)
     phone_number = models.CharField(max_length=20)
@@ -26,7 +25,7 @@ class Payment(models.Model):
     last_name = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):
-        return f"Payment {self.tracking_id} - {self.user} - {self.state}"
+        return f"Payment {self.tracking_id} - {self.user} - {self.status}"
 
 class WriterApplication(models.Model):
     first_name = models.CharField(max_length=255)
