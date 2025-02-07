@@ -99,21 +99,19 @@ WSGI_APPLICATION = 'learnershubbackend.wsgi.application'
 #     }
 # }
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'learnershub',
-        'HOST': os.getenv('DB_HOST'),
-        'USER': os.getenv('DB_USER'),
-         'PORT': os.getenv('DB_PORT'),   
-        'PASSWORD': os.getenv('DB_PASSWORD')
-    }
-}
 
 import dj_database_url
+DATABASES = {
+    'default': dj_database_url.config(
+        default=f"mysql://{os.getenv('DB_USER', 'root')}:"
+                f"{os.getenv('DB_PASSWORD', '')}@"
+                f"{os.getenv('DB_HOST', '127.0.0.1')}:"
+                f"{os.getenv('DB_PORT', '3306')}/"
+                f"{os.getenv('DB_NAME', 'learnershub')}"
+    )
+}
+
 DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
-DATABASES['default']['OPTIONS']['charset'] = 'utf8mb4'
-del DATABASES['default']['OPTIONS']['sslmode'] 
 DATABASES['default']['OPTIONS']['ssl'] =  {'ca': os.environ.get('MYSQL_ATTR_SSL_CA')}
 
 # Password validation
