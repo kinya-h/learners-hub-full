@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from djoser.serializers import TokenCreateSerializer
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
+
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
@@ -25,8 +26,9 @@ class PaymentCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
         fields = [
-            'tracking_id', 'provider', 'status', 'currency', 'amount', 'account',
-            'customer_id', 'phone_number', 'email', 'first_name', 'last_name'
+            'tracking_id', 'provider', 'status', 'currency', 
+            'amount', 'account', 'phone_number', 'email',
+            'first_name', 'last_name' 
         ]
         read_only_fields = ['user', 'created_at']
 
@@ -42,7 +44,7 @@ class PaymentReadSerializer(serializers.ModelSerializer):
         model = Payment
         fields = [
             'id', 'tracking_id', 'user', 'amount' ,'created_at', 'provider', 'status',
-            'currency', 'account', 'customer_id', 'phone_number', 'email',
+            'currency', 'account', 'phone_number', 'email',
             'first_name', 'last_name'
         ]
         read_only_fields = fields
