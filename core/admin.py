@@ -11,6 +11,7 @@ class PaymentAdmin(admin.ModelAdmin):
         'tracking_id',
         'user_link',
         'provider',
+        'amount_display',
         'status_badge',
         'currency',
         'account',
@@ -50,6 +51,7 @@ class PaymentAdmin(admin.ModelAdmin):
         'user',
         'provider',
         'status',
+        'amount',
         'currency',
         'account',
         'phone_number',
@@ -67,6 +69,7 @@ class PaymentAdmin(admin.ModelAdmin):
                 'user',
                 'provider',
                 'status',
+                'amount',
                 'currency',
                 'account',
                 'phone_number',
@@ -84,7 +87,7 @@ class PaymentAdmin(admin.ModelAdmin):
         Returns a colored badge for the payment status.
         """
         status_colors = {
-            'COMPLETED': 'green',
+            'COMPLETE': 'green',
             'FAILED': 'red',
             'REVERSED': 'orange',
             'PROCESSED': 'blue',
@@ -154,8 +157,9 @@ class WriterApplicationAdmin(admin.ModelAdmin):
         'category',
         'experience',
         'submission_date',
-        'approval_status',
-        'approval_action'
+        'approval_status'
+        # ,
+        # 'approval_action'
     )
     list_filter = ('is_approved', 'category', 'experience')
     search_fields = ('first_name', 'last_name', 'email')
@@ -174,24 +178,48 @@ class WriterApplicationAdmin(admin.ModelAdmin):
         return "Approved" if obj.is_approved else "Pending"
     approval_status.short_description = "Status"
 
+
+
+    def approve_applications(self, request, queryset):
+        for application in queryset:
+            if not application.is_approved:
+                # Create a WriterProfile
+                WriterProfile.objects.create(
+                    name=f"{application.first_name} {application.last_name}",
+                    role=application.category,
+                    specialization=application.category,
+                    experience=application.experience,
+                    status="Active",
+                    location="Unknown",
+                    email=application.email,
+                    phone_number=application.phone,
+                    skills=[application.category],
+                    projects="0",
+                )
+                application.is_approved = True
+                application.save()
+        self.message_user(request, "Selected applications have been approved.")
+
+    approve_applications.short_description = "Approve selected applications"
+
     def approval_action(self, obj):
         if obj.is_approved:
             return "Approved"
         return format_html(
             '<a class="button" href="{}">Approve</a>',
-            f"/api/writers/writerapplication/{obj.id}/approve/"
+            f"/api/writers/applications/{obj.id}/approve/"
         )
     approval_action.short_description = "Action"
     approval_action.allow_tags = True
 
-    def approve_applications(self, request, queryset):
-        for application in queryset:
-            if not application.is_approved:
-                self.create_writer_profile(application)
-                application.is_approved = True
-                application.save()
-        self.message_user(request, f"{queryset.count()} applications approved")
-    approve_applications.short_description = "Approve selected applications"
+    # def approve_applications(self, request, queryset):
+    #     for application in queryset:
+    #         if not application.is_approved:
+    #             self.create_writer_profile(application)
+    #             application.is_approved = True
+    #             application.save()
+    #     self.message_user(request, f"{queryset.count()} applications approved")
+    # approve_applications.short_description = "Approve selected applications"
 
     def create_writer_profile(self, application):
         WriterProfile.objects.create(

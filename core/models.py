@@ -57,3 +57,14 @@ class WriterProfile(models.Model):
 
     def __str__(self):
         return self.name        
+
+
+class Review(models.Model):
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    rating = models.IntegerField()
+    author = models.CharField(max_length=100)
+    role = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.title        

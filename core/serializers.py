@@ -64,3 +64,10 @@ class WriterProfileSerializer(serializers.ModelSerializer):
             'id', 'avatar', 'name', 'role', 'rating', 'specialization',
             'skills', 'projects', 'experience', 'status', 'location'
         ]
+
+from .models import Review
+
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = ['id', 'title', 'content', 'rating', 'author', 'role']

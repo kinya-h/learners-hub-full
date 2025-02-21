@@ -6,8 +6,8 @@ from .models import Payment
 from .serializers import PaymentCreateSerializer, PaymentReadSerializer
 from django.views.generic import TemplateView
 from rest_framework import viewsets, filters
-from .models import WriterProfile, WriterApplication
-from .serializers import WriterProfileSerializer, WriterApplicationSerializer
+from .models import WriterProfile, WriterApplication,Review
+from .serializers import WriterProfileSerializer, WriterApplicationSerializer,ReviewSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 
 class ReactAppView(TemplateView):
@@ -116,3 +116,9 @@ class WriterProfileViewSet(viewsets.ModelViewSet):
     }
     search_fields = ['name', 'role', 'specialization', 'skills']
     ordering_fields = ['rating', 'experience']    
+
+
+
+class ReviewViewSet(viewsets.ModelViewSet):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
